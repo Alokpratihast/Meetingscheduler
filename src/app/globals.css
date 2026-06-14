@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f7fb;
+  --foreground: #172033;
+  --muted: #667085;
+  --brand: #4f46e5;
+  --brand-dark: #3730a3;
+  --surface: #ffffff;
+  --border: #e4e7ec;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top right, #e0e7ff 0, transparent 28rem),
+    var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgb(99 102 241 / 25%);
+  outline-offset: 2px;
+}
+
+.app-card {
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 12px 34px rgb(16 24 40 / 6%);
+  backdrop-filter: blur(10px);
+}
+
+.form-control {
+  width: 100%;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.8rem;
+  background: #fff;
+  padding: 0.75rem 0.9rem;
+  color: #172033;
+}
+
+.form-control:focus {
+  border-color: #6366f1;
+}
