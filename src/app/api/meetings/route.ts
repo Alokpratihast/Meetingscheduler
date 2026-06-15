@@ -11,6 +11,15 @@ import {
 import { Meeting } from "@/models/Meeting";
 import { Teacher } from "@/models/Teacher";
 
+import { createAuditLog } from "@/lib/audit";
+
+type BlockedSlot = {
+  date: Date;
+  startTime: string;
+  endTime: string;
+  reason?: string;
+};
+
 const activeStatuses = ["pending", "approved"];
 
 export async function GET(request: NextRequest) {
@@ -112,6 +121,56 @@ export async function POST(request: NextRequest) {
       );
     }
 
+
+    const meetingDay = new Date(
+  `${data.meetingDate}T00:00:00`
+).toLocaleDateString("en-US", {
+  weekday: "long",
+});
+
+if (
+  !teacher.workingDays ||
+  !teacher.workingDays.includes(meetingDay)
+) {
+  return apiError(
+    `Teacher is unavailable on ${meetingDay}`,
+    400
+  );
+}
+
+if (
+  !teacher.workingHours ||
+  data.startTime < teacher.workingHours.start ||
+  data.endTime > teacher.workingHours.end
+) {
+  return apiError(
+    `Meeting must be between ${teacher.workingHours.start} and ${teacher.workingHours.end}`,
+    400
+  );
+}
+
+const blocked = teacher.blockedSlots?.find(
+  (slot: BlockedSlot) => {
+    const slotDate =
+      new Date(slot.date)
+        .toISOString()
+        .split("T")[0];
+
+    return (
+      slotDate === data.meetingDate &&
+      slot.startTime < data.endTime &&
+      slot.endTime > data.startTime
+    );
+  }
+);
+
+if (blocked) {
+  return apiError(
+    "Teacher has blocked this time slot",
+    409
+  );
+}
+
     const conflict = await Meeting.findOne({
       meetingDate: new Date(`${data.meetingDate}T00:00:00`),
       status: { $in: activeStatuses },
@@ -149,6 +208,21 @@ export async function POST(request: NextRequest) {
       "name email department designation"
     );
 
+    await createAuditLog({
+  action: "MEETING_CREATED",
+  performedBy: session.user.email.toLowerCase(),
+  role: session.user.role,
+  entityType: "meeting",
+  entityId: meeting._id.toString(),
+  details: {
+    title: meeting.title,
+    studentEmail: meeting.studentEmail,
+    teacherId: teacher._id.toString(),
+    meetingDate: meeting.meetingDate,
+    startTime: meeting.startTime,
+    endTime: meeting.endTime,
+  },
+});
     return NextResponse.json(
       {
         success: true,

@@ -52,16 +52,35 @@ export async function createCalendarEvent(
     conferenceDataVersion: 1,
     sendUpdates: "all",
     requestBody: {
-      ...eventBody(meeting),
-      conferenceData: {
-        createRequest: {
-          requestId: crypto.randomUUID(),
-          conferenceSolutionKey: {
-            type: "hangoutsMeet",
-          },
-        },
+  ...eventBody(meeting),
+
+  reminders: {
+    useDefault: false,
+    overrides: [
+      {
+        method: "email",
+        minutes: 1440, // 24 hours
+      },
+      {
+        method: "popup",
+        minutes: 60, // 1 hour
+      },
+      {
+        method: "popup",
+        minutes: 15, // 15 minutes
+      },
+    ],
+  },
+
+  conferenceData: {
+    createRequest: {
+      requestId: crypto.randomUUID(),
+      conferenceSolutionKey: {
+        type: "hangoutsMeet",
       },
     },
+  },
+},
   });
 
   return {
@@ -82,11 +101,31 @@ export async function updateCalendarEvent(
 ) {
   const calendar = calendarClient(accessToken);
   await calendar.events.patch({
-    calendarId: "primary",
-    eventId,
-    sendUpdates: "all",
-    requestBody: eventBody(meeting),
-  });
+  calendarId: "primary",
+  eventId,
+  sendUpdates: "all",
+  requestBody: {
+    ...eventBody(meeting),
+
+    reminders: {
+      useDefault: false,
+      overrides: [
+        {
+          method: "email",
+          minutes: 1440,
+        },
+        {
+          method: "email",
+          minutes: 60,
+        },
+        {
+          method: "email",
+          minutes: 15,
+        },
+      ],
+    },
+  },
+});
 }
 
 export async function deleteCalendarEvent(

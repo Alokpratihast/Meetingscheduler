@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createAuditLog } from "@/lib/audit";
 
 import {
   apiError,
@@ -81,6 +82,18 @@ export async function POST(request: Request) {
       { email: parsed.data.email },
       { $set: { role: "teacher" } }
     );
+
+    await createAuditLog({
+  action: "TEACHER_CREATED",
+  performedBy: session.user.email.toLowerCase(),
+  role: session.user.role,
+  entityType: "teacher",
+  entityId: teacher._id.toString(),
+  details: {
+    email: teacher.email,
+    department: teacher.department,
+  },
+});
 
     return NextResponse.json(
       {

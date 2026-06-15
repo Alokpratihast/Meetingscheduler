@@ -122,6 +122,23 @@ const MeetingSchema = new Schema(
       type: String,
       default: "Asia/Kolkata",
     },
+
+    reminders: {
+  reminder24hSent: {
+    type: Boolean,
+    default: false,
+  },
+
+  reminder1hSent: {
+    type: Boolean,
+    default: false,
+  },
+
+  reminder15mSent: {
+    type: Boolean,
+    default: false,
+  },
+},
   },
   {
     timestamps: true,

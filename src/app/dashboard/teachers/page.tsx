@@ -5,6 +5,7 @@ import TeacherTable from "@/components/teachers/TeacherTable";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import AvailabilityManager from "@/components/teachers/AvailabilityManager";
 
 type Teacher = {
   _id: string;
@@ -181,28 +182,43 @@ export default function TeachersPage() {
         </div>
 
         <div className="md:col-span-2">
-          <div className="bg-white border rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Teachers Directory</h2>
-              <input
-                type="text"
-                placeholder="Search teacher..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="border rounded-lg p-2 w-64"
-              />
-            </div>
+  <AvailabilityManager />
 
-            {filteredTeachers.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold">No Teachers Found</h3>
-                <p className="text-gray-500 mt-2">Add a teacher to get started.</p>
-              </div>
-            ) : (
-              <TeacherTable teachers={filteredTeachers} fetchTeachers={fetchTeachers} />
-            )}
-          </div>
-        </div>
+  <div className="mt-6 bg-white border rounded-2xl p-6 shadow-sm">
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-lg font-semibold">
+        Teachers Directory
+      </h2>
+
+      <input
+        type="text"
+        placeholder="Search teacher..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="border rounded-lg p-2 w-64"
+      />
+    </div>
+
+    {filteredTeachers.length === 0 ? (
+      <div className="text-center py-12">
+        <h3 className="text-xl font-semibold">
+          No Teachers Found
+        </h3>
+
+        <p className="text-gray-500 mt-2">
+          Add a teacher to get started.
+        </p>
+      </div>
+    ) : (
+      <TeacherTable
+        teachers={filteredTeachers}
+        fetchTeachers={fetchTeachers}
+      />
+    )}
+  </div>
+</div>
+
+
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
+import { createAuditLog } from "@/lib/audit";
 
 import { apiError, getApiSession } from "@/lib/api-auth";
 import {
@@ -168,11 +169,65 @@ export async function PATCH(request: NextRequest, { params }: Context) {
     }
 
     Object.assign(meeting, parsed.data);
+
+    if (
+  parsed.data.status === "completed" &&
+  Array.isArray(meeting.attendance)
+) {
+  const now = new Date();
+
+  meeting.attendance.forEach((entry: any) => {
+    if (!entry.leftAt) {
+      entry.leftAt = now;
+
+      const durationMs =
+        now.getTime() -
+        new Date(entry.joinedAt).getTime();
+
+      entry.durationMinutes = Math.max(
+        1,
+        Math.round(durationMs / 60000)
+      );
+    }
+  });
+}
+
     await meeting.save();
     await meeting.populate(
       "teacherId",
       "name email department designation"
     );
+
+
+    if (scheduleChanged) {
+  await createAuditLog({
+    action: "MEETING_UPDATED",
+    performedBy: session.user.email.toLowerCase(),
+    role: session.user.role,
+    entityType: "meeting",
+    entityId: meeting._id.toString(),
+    details: {
+      title: meeting.title,
+      meetingDate: meeting.meetingDate,
+      startTime: meeting.startTime,
+      endTime: meeting.endTime,
+    },
+  });
+}
+
+if (parsed.data.status === "completed") {
+  await createAuditLog({
+    action: "MEETING_COMPLETED",
+    performedBy: session.user.email.toLowerCase(),
+    role: session.user.role,
+    entityType: "meeting",
+    entityId: meeting._id.toString(),
+    details: {
+      title: meeting.title,
+      studentEmail: meeting.studentEmail,
+    },
+  });
+}
 
     return NextResponse.json({
       success: true,
@@ -229,6 +284,18 @@ export async function DELETE(_request: NextRequest, { params }: Context) {
 
     meeting.status = "cancelled";
     await meeting.save();
+
+    await createAuditLog({
+  action: "MEETING_CANCELLED",
+  performedBy: session.user.email.toLowerCase(),
+  role: session.user.role,
+  entityType: "meeting",
+  entityId: meeting._id.toString(),
+  details: {
+    title: meeting.title,
+    studentEmail: meeting.studentEmail,
+  },
+});
 
     return NextResponse.json({
       success: true,

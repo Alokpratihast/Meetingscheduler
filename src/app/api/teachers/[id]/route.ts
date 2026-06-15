@@ -10,6 +10,7 @@ import {
 import { Meeting } from "@/models/Meeting";
 import { Teacher } from "@/models/Teacher";
 import { User } from "@/models/User";
+import { createAuditLog } from "@/lib/audit";
 
 type Context = {
   params: Promise<{ id: string }>;
@@ -162,6 +163,19 @@ export async function DELETE(_request: Request, { params }: Context) {
       { email: teacher.email.toLowerCase() },
       { $set: { role: "candidate" } }
     );
+
+    await createAuditLog({
+  action: "TEACHER_DELETED",
+  performedBy: session.user.email.toLowerCase(),
+  role: session.user.role,
+  entityType: "teacher",
+  entityId: teacher._id.toString(),
+  details: {
+    email: teacher.email,
+    department: teacher.department,
+    designation: teacher.designation,
+  },
+});
 
     return NextResponse.json({
       success: true,

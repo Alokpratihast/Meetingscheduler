@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 import MeetingForm from "@/components/meetings/MeetingForm";
 import MeetingTable from "@/components/meetings/MeetingTable";
@@ -84,6 +85,78 @@ export default function MeetingsPage() {
     return matchesSearch && matchesStatus;
   });
 
+
+
+
+  const attendanceEntries = meetings.flatMap(
+  (meeting) => meeting.attendance ?? []
+);
+
+
+const completedAttendance =
+  attendanceEntries.filter(
+    (entry) =>
+      entry.leftAt &&
+      (entry.durationMinutes ?? 0) > 0
+  );
+
+const avgDuration =
+  completedAttendance.length === 0
+    ? 0
+    : Math.round(
+        completedAttendance.reduce(
+          (sum, entry) =>
+            sum + (entry.durationMinutes ?? 0),
+          0
+        ) / completedAttendance.length
+      );
+
+const attendancePercentage =
+  meetings.length === 0
+    ? 0
+    : Math.round(
+        (attendanceEntries.length /
+          meetings.length) *
+          100
+      );
+    
+
+
+const exportExcel = () => {
+
+  console.log("Meetings:", meetings);
+  console.log("Filtered:", filteredMeetings);
+  const rows = filteredMeetings.map((meeting) => ({
+    Title: meeting.title,
+    Candidate: meeting.studentName,
+    Email: meeting.studentEmail,
+    Teacher: meeting.teacherId?.name || "N/A",
+    Date: new Date(meeting.meetingDate).toLocaleDateString("en-IN"),
+    Time: `${meeting.startTime} - ${meeting.endTime}`,
+    Status: meeting.status,
+    AttendanceCount: meeting.attendance?.length || 0,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Meetings"
+  );
+
+  XLSX.writeFile(
+    workbook,
+    `meeting-report-${Date.now()}.xlsx`
+  );
+};
+
+
+
+
+
   const stats = [
     ["Total", meetings.length, "text-indigo-700 bg-indigo-50"],
     [
@@ -101,6 +174,17 @@ export default function MeetingsPage() {
       meetings.filter((meeting) => meeting.status === "cancelled").length,
       "text-rose-700 bg-rose-50",
     ],
+    [
+  "Attendance %",
+  `${attendancePercentage}%`,
+  "text-purple-700 bg-purple-50",
+],
+
+[
+  "Avg Duration",
+  `${avgDuration} min`,
+  "text-cyan-700 bg-cyan-50",
+],
   ] as const;
 
   return (
@@ -121,6 +205,29 @@ export default function MeetingsPage() {
               : "View your assigned meetings and join when it is time."}
           </p>
         </div>
+
+        <div className="flex items-center gap-3">
+  <button
+    onClick={exportExcel}
+    className="
+      rounded-xl
+      bg-emerald-600
+      px-4
+      py-2
+      text-sm
+      font-bold
+      text-white
+      hover:bg-emerald-700
+    "
+  >
+    Export Excel
+  </button>
+
+  <span className="w-fit rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold capitalize text-slate-600 shadow-sm">
+    {session?.user.role || "user"} view
+  </span>
+</div>
+
         <span className="w-fit rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-bold capitalize text-slate-600 shadow-sm">
           {session?.user.role || "user"} view
         </span>
