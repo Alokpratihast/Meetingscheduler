@@ -30,13 +30,13 @@ export async function POST(
       return apiError("Invalid user", 400);
     }
 
-    const body = await request.json().catch(() => ({}));
-    const promote = body?.promote === undefined ? true : Boolean(body.promote);
-
     await connectDB();
 
-    const update: Record<string, unknown> = { isApproved: true };
-    if (promote) update.role = "teacher";
+const update: Record<string, unknown> = {
+  isApproved: true,
+};
+
+
 
     const user = await User.findByIdAndUpdate(id, update, { new: true });
 

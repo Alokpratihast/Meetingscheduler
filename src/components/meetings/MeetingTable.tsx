@@ -89,6 +89,36 @@ export default function MeetingTable({
     }
   };
 
+
+  const canJoinMeeting = (meeting: MeetingRecord) => {
+  const now = new Date();
+
+  const meetingDate = new Date(meeting.meetingDate);
+
+  const [startHour, startMinute] = meeting.startTime
+    .split(":")
+    .map(Number);
+
+  const [endHour, endMinute] = meeting.endTime
+    .split(":")
+    .map(Number);
+
+  const start = new Date(meetingDate);
+  start.setHours(startHour, startMinute, 0, 0);
+
+  const end = new Date(meetingDate);
+  end.setHours(endHour, endMinute, 0, 0);
+
+  // Join allowed 5 minutes before meeting
+  const joinStart = new Date(
+    start.getTime() - 5 * 60 * 1000
+  );
+
+  
+
+  return now >= joinStart && now <= end;
+};
+
   if (meetings.length === 0) {
     return (
       <div className="app-card border-dashed p-14 text-center">
@@ -166,56 +196,78 @@ export default function MeetingTable({
             </div>
 
             <div className="flex flex-wrap gap-2 lg:justify-end">
-              {meeting.googleMeetLink && meeting.status === "approved" && (
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const email = session?.user.email?.toLowerCase();
-                    const isAllowed =
-                      email === meeting.studentEmail.toLowerCase() ||
-                      email === meeting.organizerEmail?.toLowerCase() ||
-                      session?.user.role === "admin";
+              {meeting.googleMeetLink &&
+  meeting.status === "approved" &&
+  canJoinMeeting(meeting) && (
+    <button
+      type="button"
+      onClick={async () => {
+        const email = session?.user.email?.toLowerCase();
 
-                    if (!isAllowed) {
-                      toast.error("Only meeting participants can join.");
-                      return;
-                    }
+        const isAllowed =
+          email === meeting.studentEmail.toLowerCase() ||
+          email === meeting.organizerEmail?.toLowerCase() ||
+          session?.user.role === "admin";
 
-                    const windowRef = window.open("", "_blank");
+        if (!isAllowed) {
+          toast.error("Only meeting participants can join.");
+          return;
+        }
 
-                    try {
-                      const response = await fetch(
-                        `/api/meetings/${meeting._id}/attendance`,
-                        {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ action: "join" }),
-                        }
-                      );
-                      const result = await response.json();
-                      if (!response.ok || !result.success) {
-                        throw new Error(result.message || "Failed to record attendance");
-                      }
-                      if (windowRef) {
-                        windowRef.location.href = meeting.googleMeetLink ?? "";
-                      }
-                      toast.success("Attendance recorded and meeting opened.");
-                    } catch (error) {
-                      if (windowRef) {
-                        windowRef.close();
-                      }
-                      toast.error(
-                        error instanceof Error
-                          ? error.message
-                          : "Could not join meeting"
-                      );
-                    }
-                  }}
-                  className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-700"
-                >
-                  Join Meet
-                </button>
-              )}
+        const windowRef = window.open("", "_blank");
+
+        try {
+          const response = await fetch(
+            `/api/meetings/${meeting._id}/attendance`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                action: "join",
+              }),
+            }
+          );
+
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(
+              result.message ||
+                "Failed to record attendance"
+            );
+          }
+
+          if (
+  windowRef &&
+  meeting.googleMeetLink
+) {
+  windowRef.location.href =
+    meeting.googleMeetLink;
+}
+
+          toast.success(
+            
+            "Attendance recorded and meeting opened."
+          );
+        } catch (error) {
+          if (windowRef) {
+            windowRef.close();
+          }
+
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Could not join meeting"
+          );
+        }
+      }}
+      className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-700"
+    >
+      Join Meet
+    </button>
+)}
               <button
                 type="button"
                 onClick={() => setSelectedMeeting(meeting)}

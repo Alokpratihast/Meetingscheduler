@@ -44,11 +44,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         adminEmails.includes(email) ||
         existingUser?.role === "admin";
 
-      const role = isAdmin
-        ? "admin"
-        : teacher
-        ? "teacher"
-        : "candidate";
+      let role = existingUser?.role;
+
+if (!role) {
+  role = isAdmin
+    ? "admin"
+    : teacher
+    ? "teacher"
+    : "candidate";
+}
 
       const approved =
         existingUser?.isApproved ?? (isAdmin || Boolean(teacher));

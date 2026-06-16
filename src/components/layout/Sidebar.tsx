@@ -118,6 +118,15 @@ export default function Sidebar({ role }: { role: UserRole }) {
             {link.name}
           </Link>
         ))}
+
+         <button
+    type="button"
+    onClick={() => signOut({ callbackUrl: "/login" })}
+    className="rounded-xl px-4 py-2 text-xs font-semibold text-red-400"
+  >
+    Logout
+  </button>
+
       </nav>
     </>
   );

@@ -41,7 +41,7 @@ export default function PendingCandidates() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message || "Approve failed");
-      toast.success("User approved and promoted to teacher");
+      toast.success("Candidate approved successfully");
       setCandidates((c) => c.filter((x) => x._id !== id));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Approve failed");
@@ -75,7 +75,7 @@ export default function PendingCandidates() {
                       onClick={() => approve(c._id)}
                       className="px-3 py-1 rounded bg-emerald-600 text-white"
                     >
-                      Approve as Teacher
+                      Approve as Candidate
                     </button>
                   </td>
                 </tr>

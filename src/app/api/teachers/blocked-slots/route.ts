@@ -29,6 +29,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (startTime >= endTime) {
+  return apiError(
+    "End time must be after start time",
+    400
+  );
+}
+
     await connectDB();
 
     const teacher = await Teacher.findOne({
