@@ -16,6 +16,19 @@ const links = [
     marker: "T",
     teacherOnly: true,
   },
+  {
+  name: "Analytics",
+  href: "/dashboard/admin/analytics",
+  marker: "📊",
+  adminOnly: true,
+},
+
+  {
+    name: "Audit Logs",
+    href: "/dashboard/admin/audit-logs",
+    marker: "L",
+    adminOnly: true,
+  },
 ];
 
 export default function Sidebar({ role }: { role: UserRole }) {

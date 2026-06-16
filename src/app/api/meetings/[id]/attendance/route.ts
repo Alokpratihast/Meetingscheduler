@@ -73,11 +73,29 @@ export async function POST(
       }
 
       meeting.attendance = meeting.attendance || [];
+
+      const meetingStart = new Date(
+  `${meeting.meetingDate
+    .toISOString()
+    .split("T")[0]}T${meeting.startTime}:00`
+);
+
+const lateMinutes = Math.floor(
+  (now.getTime() -
+    meetingStart.getTime()) /
+    60000
+);
+
+const isLate = lateMinutes > 5;
+
       meeting.attendance.push({
         userEmail: email,
         role,
         joinedAt: now,
         durationMinutes: 0,
+        isLate,
+        lateMinutes: isLate ? lateMinutes : 0,
+        
       });
     } else {
       if (!activeEntry) {

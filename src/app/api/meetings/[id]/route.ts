@@ -190,6 +190,11 @@ export async function PATCH(request: NextRequest, { params }: Context) {
       );
     }
   });
+   if (meeting.attendance.length === 0) {
+    meeting.attendanceStatus = "no-show";
+  } else {
+    meeting.attendanceStatus = "present";
+  }
 }
 
     await meeting.save();

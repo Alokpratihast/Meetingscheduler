@@ -7,6 +7,7 @@ import { Teacher } from "@/models/Teacher";
 import { User } from "@/models/User";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: process.env.AUTH_TRUST_HOST === "true",
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,

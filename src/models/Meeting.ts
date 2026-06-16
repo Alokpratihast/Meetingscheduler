@@ -109,6 +109,15 @@ const MeetingSchema = new Schema(
           type: Number,
           default: 0,
         },
+        isLate: {
+  type: Boolean,
+  default: false,
+},
+
+lateMinutes: {
+  type: Number,
+  default: 0,
+},
       },
     ],
 
@@ -138,6 +147,15 @@ const MeetingSchema = new Schema(
     type: Boolean,
     default: false,
   },
+  attendanceStatus: {
+  type: String,
+  enum: [
+    "present",
+    "partial",
+    "no-show",
+  ],
+  default: "present",
+},
 },
   },
   {
