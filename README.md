@@ -1,36 +1,244 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Teacher Meeting Scheduler & Attendance Management System
 
-## Getting Started
+## Overview
 
-First, run the development server:
+A centralized platform for scheduling meetings with Google Meet, managing calendars, tracking attendance, generating analytics, and maintaining audit logs.
 
-```bash
+The system eliminates manual scheduling conflicts, attendance visibility gaps, missing reminders, and inconsistent reporting.
+
+---
+
+## Features
+
+### Authentication
+
+* Google OAuth 2.0 Login
+* Role Based Access Control (Admin, Teacher, Candidate)
+* Candidate Approval Workflow
+
+### Meeting Management
+
+* Create Meetings
+* Update / Reschedule Meetings
+* Cancel Meetings
+* Google Meet Link Generation
+* Google Calendar Integration
+* Conflict Detection
+
+### Attendance Tracking
+
+* Join Attendance Tracking
+* Leave Attendance Tracking
+* Attendance Duration Calculation
+* Late Join Detection
+* Attendance Analytics
+
+### Notifications
+
+* 24 Hour Reminder
+* 1 Hour Reminder
+* 15 Minute Reminder
+
+### Analytics & Reporting
+
+* Attendance Dashboard
+* Attendance Percentage
+* No Show Tracking
+* Average Duration Metrics
+* Audit Logs
+
+### Administration
+
+* Teacher Management
+* Candidate Approval
+* Audit Log Monitoring
+
+### Documentation
+
+* Swagger/OpenAPI Documentation
+* Docker Support
+* Docker Compose Support
+
+---
+
+## Technology Stack
+
+### Frontend
+
+* Next.js 16
+* React
+* TypeScript
+* Tailwind CSS
+
+### Backend
+
+* Next.js API Routes
+* NextAuth.js
+* Google OAuth
+
+### Database
+
+* MongoDB
+* Mongoose
+
+### Integrations
+
+* Google Calendar API
+* Google Meet
+* Gmail OAuth
+
+### Deployment
+
+* Vercel
+* Docker
+* Docker Compose
+
+---
+
+## Prerequisites
+
+* Node.js 20+
+* MongoDB Atlas
+* Google Cloud Project
+* Docker Desktop (Optional)
+
+---
+
+## Installation
+
+Clone Repository
+
+## bash
+git clone <repository-url>
+cd Meetingscheduler
+---
+
+Install Dependencies
+
+## bash
+npm install
+## 
+
+Create Environment File
+
+## bash
+cp .env.example .env.local
+
+
+Run Development Server
+
+## bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Application URL:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## txt
+http://localhost:3000
+## 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Required variables:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## env
+MONGODB_URI=
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-## Deploy on Vercel
+AUTH_SECRET=
+AUTH_TRUST_HOST=true
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+NEXTAUTH_URL=http://localhost:3000
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## IN_EMAILS=
+## 
+
+---
+
+## Production Build
+
+## bash
+npm run build
+npm start
+## 
+
+---
+
+## Docker Setup
+
+Build Image
+
+## bash
+docker build -t meeting-scheduler .
+## 
+
+Run Container
+
+## bash
+docker run --env-file .env.local -p 3000:3000 meeting-scheduler
+## 
+
+Docker Compose
+
+## bash
+docker compose up --build
+## 
+
+Stop Containers
+
+bash
+docker compose down
+
+
+---
+
+## API Documentation
+
+Swagger Documentation:
+
+## txt
+http://localhost:3000/docs
+## 
+
+Production:
+
+## txt
+https://meetingscheduler-5cn1.vercel.app/docs
+## 
+
+---
+
+## Main Modules
+
+* Authentication
+* Meeting Scheduling
+* Google Calendar Integration
+* Google Meet Integration
+* Attendance Tracking
+* Attendance Analytics
+* Audit Logs
+* Teacher Availability Management
+
+---
+
+## Deployment
+
+Production deployment is hosted on Vercel.
+
+Deployment process:
+
+## bash
+git push origin main
+## 
+
+Vercel automatically builds and deploys the latest version.
+
+---
+
+## License
+
+This project was developed as part of the Teacher Meeting Scheduler & Attendance Management System assignment.
