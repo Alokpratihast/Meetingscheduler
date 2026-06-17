@@ -2,62 +2,84 @@
 
 ## Overview
 
-A centralized platform for scheduling meetings with Google Meet, managing calendars, tracking attendance, generating analytics, and maintaining audit logs.
+Teacher Meeting Scheduler is a full-stack web application that streamlines meeting scheduling between teachers and candidates. It integrates Google OAuth, Google Calendar, and Google Meet to automate scheduling, attendance tracking, analytics, and administrative workflows.
 
-The system eliminates manual scheduling conflicts, attendance visibility gaps, missing reminders, and inconsistent reporting.
+The platform eliminates manual scheduling conflicts, simplifies meeting management, and provides real-time attendance and reporting.
 
 ---
 
-## Features
+# Features
 
-### Authentication
+## Authentication
 
 * Google OAuth 2.0 Login
-* Role Based Access Control (Admin, Teacher, Candidate)
+* NextAuth v5 Authentication
+* Role-Based Access Control
+
+  * Admin
+  * Teacher
+  * Candidate
 * Candidate Approval Workflow
 
-### Meeting Management
+---
+
+## Meeting Management
 
 * Create Meetings
-* Update / Reschedule Meetings
+* Update Meetings
 * Cancel Meetings
 * Google Meet Link Generation
 * Google Calendar Integration
-* Conflict Detection
+* Meeting Conflict Detection
+* Teacher Availability Validation
+* Blocked Slot Validation
 
-### Attendance Tracking
+---
+
+## Attendance Management
 
 * Join Attendance Tracking
-* Leave Attendance Tracking
-* Attendance Duration Calculation
-* Late Join Detection
 * Attendance Analytics
+* Attendance Duration Tracking
+* Meeting Participation Logs
 
-### Notifications
+---
 
-* 24 Hour Reminder
-* 1 Hour Reminder
-* 15 Minute Reminder
+## Teacher Management
 
-### Analytics & Reporting
+* Add Teacher
+* Update Teacher
+* Delete Teacher
+* Working Days Management
+* Working Hours Management
+* Blocked Slots
 
-* Attendance Dashboard
-* Attendance Percentage
-* No Show Tracking
-* Average Duration Metrics
-* Audit Logs
+---
 
-### Administration
+## Analytics
 
-* Teacher Management
-* Candidate Approval
-* Audit Log Monitoring
+* Total Meetings
+* Pending Meetings
+* Completed Meetings
+* Cancelled Meetings
+* Attendance Reports
+* Dashboard Analytics
 
-### Documentation
+---
 
-* Swagger/OpenAPI Documentation
-* Docker Support
-* Docker Compose Support
+## Audit Logs
+
+* Meeting Activity Logs
+* User Activity Logs
+* Administrative Logs
+
+---
+
+## API Documentation
+
+* Swagger UI
+* REST API Documentation
+* Request & Response Examples
 
 ---
 
@@ -66,22 +88,22 @@ The system eliminates manual scheduling conflicts, attendance visibility gaps, m
 ### Frontend
 
 * Next.js 16
-* React
+* React 19
 * TypeScript
 * Tailwind CSS
 
 ### Backend
 
 * Next.js API Routes
-* NextAuth.js
+* NextAuth v5
 * Google OAuth
 
 ### Database
 
-* MongoDB
+* MongoDB Atlas
 * Mongoose
 
-### Integrations
+### Third Party Integrations
 
 * Google Calendar API
 * Google Meet
@@ -95,55 +117,70 @@ The system eliminates manual scheduling conflicts, attendance visibility gaps, m
 
 ---
 
-## Prerequisites
+# Project Structure
+
+```
+src
+├── app
+│   ├── api
+│   ├── dashboard
+│   └── login
+├── components
+├── lib
+├── models
+├── types
+└── utils
+```
+
+---
+
+# Prerequisites
 
 * Node.js 20+
 * MongoDB Atlas
-* Google Cloud Project
+* Google Cloud Console Project
 * Docker Desktop (Optional)
 
 ---
 
-## Installation
+# Installation
 
-Clone Repository
+Clone the repository
 
-## bash
-git clone <repository-url>
+```bash
+git clone https://github.com/Alokpratihast/Meetingscheduler.git
 cd Meetingscheduler
----
+```
 
-Install Dependencies
+Install dependencies
 
-## bash
+```bash
 npm install
-## 
+```
 
-Create Environment File
+Create environment file
 
-## bash
+```bash
 cp .env.example .env.local
+```
 
+Run development server
 
-Run Development Server
-
-## bash
+```bash
 npm run dev
-## 
+```
 
-Application URL:
+Application
 
-## txt
+```
 http://localhost:3000
-## 
+```
 
 ---
 
-## Environment Variables
+# Environment Variables
 
-Required variables:
-
-## env
+```env
 MONGODB_URI=
 
 GOOGLE_CLIENT_ID=
@@ -154,91 +191,127 @@ AUTH_TRUST_HOST=true
 
 NEXTAUTH_URL=http://localhost:3000
 
-## IN_EMAILS=
-## 
+ADMIN_EMAILS=admin@gmail.com
+```
 
 ---
 
-## Production Build
+# Production Build
 
-## bash
+```bash
 npm run build
 npm start
-## 
+```
 
 ---
 
-## Docker Setup
+# Docker
 
-Build Image
+Build Docker Image
 
-## bash
+```bash
 docker build -t meeting-scheduler .
-## 
+```
 
 Run Container
 
-## bash
+```bash
 docker run --env-file .env.local -p 3000:3000 meeting-scheduler
-## 
+```
 
-Docker Compose
+Using Docker Compose
 
-## bash
+```bash
 docker compose up --build
-## 
+```
 
 Stop Containers
 
-bash
+```bash
 docker compose down
-
-
----
-
-## API Documentation
-
-Swagger Documentation:
-
-## txt
-http://localhost:3000/docs
-## 
-
-Production:
-
-## txt
-https://meetingscheduler-5cn1.vercel.app/docs
-## 
+```
 
 ---
 
-## Main Modules
+# API Documentation
+
+### Local
+
+```
+http://localhost:3000/api/docs
+```
+
+### Production
+
+```
+https://meetingscheduler-5cn1.vercel.app/api/docs
+```
+
+---
+
+# Live Demo
+
+Production URL
+
+```
+https://meetingscheduler-5cn1.vercel.app
+```
+
+---
+
+# Available Modules
 
 * Authentication
+* Candidate Approval
+* Teacher Management
+* Teacher Availability
+* Blocked Slots
 * Meeting Scheduling
 * Google Calendar Integration
 * Google Meet Integration
 * Attendance Tracking
 * Attendance Analytics
+* Dashboard Analytics
 * Audit Logs
-* Teacher Availability Management
+* Swagger Documentation
 
 ---
 
-## Deployment
+# Deployment
 
-Production deployment is hosted on Vercel.
+The application is deployed on Vercel.
 
-Deployment process:
+Every push to the `main` branch automatically triggers a new deployment.
 
-## bash
+```bash
+git add .
+git commit -m "Update project"
 git push origin main
-## 
-
-Vercel automatically builds and deploys the latest version.
+```
 
 ---
 
-## License
+# Future Enhancements
 
-This project was developed as part of the Teacher Meeting Scheduler & Attendance Management System assignment.
+* Email Reminder Scheduler
+* Recurring Meetings
+* Calendar Synchronization
+* Export Reports (PDF/Excel)
+* Meeting Recording Support
+* Push Notifications
+
+---
+
+# Author
+
+**Alok Pratihast**
+
+GitHub
+
+https://github.com/Alokpratihast/Meetingscheduler
+
+---
+
+# License
+
+This project was developed as part of the **Teacher Meeting Scheduler & Attendance Management System** assignment for educational and evaluation purposes.
